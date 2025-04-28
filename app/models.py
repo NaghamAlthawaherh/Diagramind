@@ -5,11 +5,9 @@ from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash  
 import enum
 from app import db  # استورد من نفس النسخة المعرفة في __init__.py
+from flask_login import UserMixin
 
-
-
-
-class User(db.Model):
+class User(db.Model,UserMixin):
     """User table for authentication and user management"""
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
@@ -19,9 +17,14 @@ class User(db.Model):
     password_hash = db.Column(db.String(256))
     def __repr__(self):
        return f"<User {self.full_name}>"
+images=db.relationship('Image',backref='author',lazy=True)
 
-
-
+class Image(db.Model):
+    __tablename__='image'
+    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    label = db.Column(db.String(50))  # مثلاً "Actor" أو "Use Case"
+    image_data = db.Column(db.LargeBinary) 
 class UseCaseDiagram(db.Model):
     """Use case diagram table for storing uploaded diagrams"""
     __tablename__ = 'use_case_diagrams'

@@ -1,8 +1,14 @@
-from flask import Flask,Blueprint, flash, redirect,request,jsonify,render_template, url_for
+from flask import Flask,send_file,Blueprint, flash, redirect,request,jsonify,render_template, session, url_for
 # from flask_sqlalchemy import SQLAlchemy
+import numpy as np
 from werkzeug.security import generate_password_hash,check_password_hash  
-from app.models import ProjectEstimation, User, db
-
+from app.models import Image, ProjectEstimation, User, db
+from flask_login import login_user, logout_user, login_required, current_user
+import os, io
+import cv2
+from PIL import Image as PILImage
+from ultralytics import YOLO
+from app.utils.yolo_detect import analyze_diagram
 
 main_bp = Blueprint('main', __name__)
 
@@ -46,6 +52,7 @@ def signup():
     return render_template('signup.html')
 
 @main_bp.route('/index')
+@login_required
 def index():
     return render_template('index.html')
 
@@ -68,7 +75,8 @@ def login():
 
         if user:
             if check_password_hash(user.password_hash, password):
-                flash(f"Welcome back, {user.full_name}!", "success")
+                login_user(user)
+                # flash(f"Welcome back, {user.full_name}!", "success")
                 return redirect(url_for('main.index'))
             else:
                 flash("Invalid password. Please try again.", "danger")
@@ -78,6 +86,13 @@ def login():
         return redirect(url_for('main.login'))  # لو فشل يرجعه
 
     return render_template('login.html')
+@main_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    # session.pop('_flashes', None)
+    flash("You have been logged out.", "info")
+    return redirect(url_for('main.login'))
 
 @main_bp.route('/upload', methods=['POST'])
 def upload_file():
@@ -94,3 +109,56 @@ def upload_file():
     # do something with the file...
     flash("File uploaded successfully!", "success")
     return redirect(url_for('main.results', estimation_id=estimation.id)) # أو أي صفحة بدك توديه عليها
+
+@main_bp.route('/save-image', methods=['POST'])
+def save_image():
+    if current_user.is_authenticated:
+        new_img = Image(
+            user_id=current_user.id,
+            # باقي الحقول...
+        )
+        db.session.add(new_img)
+        db.session.commit()
+        return "✅ Saved to DB"
+    else:
+        return "❌ User not logged in", 401
+
+@main_bp.route('/analyze', methods=['POST'])
+@login_required
+def analyze_image():
+    if 'diagram' not in request.files:
+        flash("No file part", "danger")
+        return redirect(url_for('main.index'))
+
+    file = request.files['diagram']
+    if file.filename == '':
+        flash("No selected file", "danger")
+        return redirect(url_for('main.index'))
+
+    image_bytes = file.read()
+
+    try:
+        class_counts = analyze_diagram(image_bytes)
+        flash("✅ Diagram analyzed and saved to database", "success")
+    except Exception as e:
+        flash(f"❌ Error during analysis: {e}", "danger")
+
+    return redirect(url_for('main.index'))
+
+
+from flask import render_template
+from flask_login import login_required, current_user
+from app.models import Image
+
+# @main_bp.route('/my-crops')
+# @login_required
+# def show_cropped_images():
+#     images = Image.query.filter_by(user_id=current_user.id).all()
+#     return render_template('cropped_images.html', images=images)
+
+@main_bp.route('/image/<int:image_id>')
+def display_image(image_id):
+    img = Image.query.get_or_404(image_id)
+    return send_file(io.BytesIO(img.image_data), mimetype='image/png')
+
+
