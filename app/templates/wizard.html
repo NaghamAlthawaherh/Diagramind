@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wizard Steps</title>
+
+  <!-- ✅ Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- ✅ Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/wizard.css') }}" />
+</head>
+<body>
+  <div class="wizard">
+    <!-- Wizard Steps -->
+    <div class="wizard-steps">
+      <div class="wizard-step active">1</div>
+      <div class="wizard-step">2</div>
+      <div class="wizard-step">3</div>
+      <div class="wizard-step">4</div>
+    </div>
+
+    <!-- Wizard Contents -->
+    <div class="wizard-contents">
+      <!-- Step 1 -->
+      <div class="wizard-content active">
+        <h2>Step 1: Upload Diagram</h2>
+        <p>Upload your use case diagram to start analysis.</p>
+
+        <!-- Bootstrap Alert -->
+        <div class="alert alert-warning mt-3" role="alert">
+          <strong>Important Tip:</strong> For best detection accuracy, ensure that use case shapes (ellipses) are in a color that clearly contrasts with the background or boundaries.
+        </div>
+
+        <!-- Example Image -->
+        <div class="text-center mt-3">
+          <img
+            src="https://www.visily.ai/wp-content/uploads/2024/04/image-use-case-diagram-template-400090154-1200x758.png"
+            alt="Valid Use Case Diagram Example"
+            class="img-fluid rounded border"
+          />
+          <p class="text-muted mt-2">
+            Use case shapes should be in a color that contrasts with the background.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="wizard-content">
+        <h2>Step 2: Detect & Classify Elements</h2>
+        <p>Detect elements (Actors, Use Cases) and classify their type and complexity.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="wizard-content">
+        <h2>Step 3: Adjust General System Characteristics</h2>
+        <p>Answer 14 adjustment questions to calculate adjustment factor.</p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="wizard-content">
+        <h2>Step 4: Get Estimation</h2>
+        <p>Review effort, cost, team size, and project timeline estimation.</p>
+      </div>
+    </div>
+
+    <!-- Wizard Buttons -->
+    <div class="wizard-buttons">
+      <button id="backBtn">Back</button>
+      <button id="nextBtn">Next</button>
+      <a href="index1.html" id="finishBtn" style="display: none;">
+        <button>Finish</button>
+      </a>      
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ✅ Bootstrap JS (optional for future interactivity) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ✅ Custom JS -->
+  <script src="{{ url_for('static', filename='js/wizard.js') }}" defer></script>
+</body>
+</html>
