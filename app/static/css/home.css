@@ -1,0 +1,212 @@
+
+/* ----------------------------------------------
+   🎨 Global Styles & Variables
+---------------------------------------------- */
+:root {
+    --primary-color: #023e8a;
+    --primary-light: #90e0ef;
+    --secondary-color: #00c897;
+    --dark-bg: linear-gradient(135deg, #0c0c0c, #1e1e1e);
+    --light-bg: linear-gradient(135deg, #03045e, #00b4d8);
+    --text-light: #ffffff;
+    --text-muted: #caf0f8;
+  }
+  
+  body {
+    background: var(--light-bg);
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    color: var(--text-light);
+    min-height: 100vh;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+  
+  /* ----------------------------------------------
+     🌙 Dark Mode Styles (Matches HTML Changes)
+  ---------------------------------------------- */
+  body.dark-mode {
+    background: var(--dark-bg) !important;
+    color: #e0e0e0 !important;
+  }
+  
+  .dark-mode .lead,
+  .dark-mode .features li,
+  .dark-mode .step p {
+    color: var(--text-muted) !important;
+  }
+  
+  .dark-mode .btn-outline-light {
+    color: var(--text-light);
+    border-color: #666;
+  }
+  
+  .dark-mode .btn-outline-light:hover {
+    background: var(--text-light);
+    color: #111;
+  }
+  
+  /* ----------------------------------------------
+     🔷 Logo & Typography (Enhanced for New HTML)
+  ---------------------------------------------- */
+  .logo {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  
+  .intro-subtitle {
+    font-size: 1.25rem;
+    color: var(--primary-light);
+    margin-bottom: 1.5rem;
+  }
+  
+  /* ----------------------------------------------
+     🎯 Buttons & CTAs (Optimized Hierarchy)
+  ---------------------------------------------- */
+  /* Base Button Styles */
+  .btn {
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+  }
+  
+  /* Primary CTA */
+  .btn-primary {
+    background: var(--primary-color);
+    border: none;
+    padding: 0.75rem 2rem;
+  }
+  
+  .btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .btn-outline-primary:hover {
+    background: var(--primary-color);
+  }
+  
+  /* Secondary CTA (Get Started) */
+  .btn-success {
+    background: var(--secondary-color);
+    border: none;
+    padding: 0.75rem 2.5rem;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 200, 151, 0.3);
+  }
+  
+  .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 200, 151, 0.4);
+  }
+  
+  /* Step Icons (New in HTML) */
+  .step-icon {
+    transition: transform 0.3s ease;
+  }
+  .step:hover .step-icon {
+    transform: scale(1.1);
+  }
+  
+  /* ----------------------------------------------
+     📋 Features List (Improved Readability)
+  ---------------------------------------------- */
+  .features {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .features ul {
+    display: grid;
+    gap: 0.75rem;
+  }
+  
+  .features li {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+  }
+  
+  /* ----------------------------------------------
+     🔄 How It Works Section (Visual Hierarchy)
+  ---------------------------------------------- */
+  .visual-flow {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    max-width: 900px;
+    margin: 2rem auto;
+  }
+  
+  .step p {
+    margin-top: 0.5rem;
+    color: var(--text-light);
+  }
+  
+  /* ----------------------------------------------
+     🏗️ Layout & Spacing Utilities
+  ---------------------------------------------- */
+  .container {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  /* ----------------------------------------------
+     📱 Responsive Adjustments (Mobile-First)
+  ---------------------------------------------- */
+  @media (max-width: 768px) {
+    .logo {
+      font-size: 2.5rem;
+    }
+    
+    .btn-group {
+      flex-direction: column;
+      gap: 0.75rem !important;
+    }
+    
+    .btn-group .btn {
+      width: 100%;
+    }
+    
+    .visual-flow {
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .step {
+      flex: 0 0 100%;
+      margin-bottom: 1.5rem;
+    }
+    
+    .fa-arrow-right {
+      transform: rotate(90deg);
+      margin: 0.5rem 0;
+    }
+  }
+  
+  /* ----------------------------------------------
+     🎭 Animations & Micro-Interactions
+  ---------------------------------------------- */
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Apply to AOS elements */
+  [data-aos] {
+    animation-duration: 0.8s !important;
+  }

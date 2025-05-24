@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Esti-Use | Project Estimation Report</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 1rem 2rem;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #2563eb;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 2rem;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 0.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .section {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 600;
+    }
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+    img.chart {
+      width: 100%;
+      max-width: 700px;
+      margin-top: 1rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .print-btn {
+      display: inline-block;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.5rem 1.25rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .print-btn:hover {
+      background-color: #1e40af;
+    }
+    @media print {
+      body {
+        margin: 0.5cm;
+        background: white;
+        color: black;
+      }
+      .print-btn {
+        display: none;
+      }
+      .section {
+        box-shadow: none;
+        border: none;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
+
+  <h1>Project Estimation Report</h1>
+
+  <section class="section" id="summarySection">
+    <h2>Summary Metrics</h2>
+    <table aria-label="Summary of project estimation values">
+      <thead>
+        <tr><th>Metric</th><th>Value</th></tr>
+      </thead>
+      <tbody id="summaryTableBody">
+        <!-- Dynamic Content via JS -->
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section" aria-label="Effort Chart">
+    <h2>Effort Chart</h2>
+    <img id="effortChartImg" class="chart" alt="Effort Chart" />
+  </section>
+
+  <section class="section" aria-label="Budget Chart">
+    <h2>Budget Chart</h2>
+    <img id="budgetChartImg" class="chart" alt="Budget Chart" />
+  </section>
+
+  <section class="section" aria-label="Project Timeline Chart">
+    <h2>Project Timeline Chart</h2>
+    <img id="timelineChartImg" class="chart" alt="Project Timeline Chart" />
+  </section>
+
+  <script>
+    // قراءة بيانات التقرير من localStorage
+    const data = JSON.parse(localStorage.getItem('estiUseReportData') || '{}');
+
+    if (!data.ufp) {
+      document.body.innerHTML = '<h2>No report data found. Please generate report from Esti-Use application.</h2>';
+    } else {
+      const summaryRows = [
+        ['Unadjusted Function Points (UFP)', data.ufp],
+        ['Adjusted Function Points (AFP)', data.afp],
+        ['Estimated Effort (Hours)', data.effortHours],
+        ['Team Size', data.teamSize],
+        ['Budget Range', `${data.budgetMin} - ${data.budgetMax}`],
+        ['Project Timeline', data.timeline],
+      ];
+
+      const tbody = document.getElementById('summaryTableBody');
+      summaryRows.forEach(([metric, value]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${metric}</td><td>${value}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('effortChartImg').src = data.effortChartImg;
+      document.getElementById('budgetChartImg').src = data.budgetChartImg;
+      document.getElementById('timelineChartImg').src = data.timelineChartImg;
+    }
+  </script>
+</body>
+</html>

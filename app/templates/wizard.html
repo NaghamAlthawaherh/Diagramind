@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estimation Wizard Guide</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --secondary-color: #f8f9fa;
+      --accent-color: #f3f4f6;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.7;
+      background-color: #f5f7fb;
+      color: #2d3748;
+    }
+    
+    .wizard {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.08);
+    }
+    
+    .wizard-steps {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    
+    .wizard-steps::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #e9ecef;
+      z-index: 0;
+    }
+    
+    .wizard-step {
+      background: #f3f4f6;
+      color: #6b7280;
+      border: 3px solid #e9ecef;
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .wizard-step.active {
+      background: var(--primary-color);
+      color: #fff;
+      border-color: var(--primary-color);
+      transform: scale(1.1);
+    }
+    
+    .wizard-step.completed {
+      background: #e0e7ff;
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .wizard-step i {
+      display: none;
+      font-size: 1.2rem;
+    }
+    
+    .wizard-step.completed i {
+      display: block;
+    }
+    
+    .wizard-step.completed span {
+      display: none;
+    }
+    
+    .wizard-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .wizard-content.active {
+      display: block;
+    }
+    
+    .wizard-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3rem;
+      gap: 1rem;
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.75rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    button:hover {
+      background-color: #4338ca;
+      transform: translateY(-2px);
+    }
+    
+    button[disabled] {
+      background-color: #d1d5db;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    pre.formula {
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary-color);
+      padding: 1.25rem;
+      border-radius: 0 8px 8px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 1.05rem;
+      white-space: pre-wrap;
+      margin: 1.5rem 0;
+      color: #2d3748;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+    
+    .info-card {
+      background: #f0f9ff;
+      border-left: 4px solid #38bdf8;
+      padding: 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0;
+    }
+    
+    .example-box {
+      background: var(--secondary-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border: 1px dashed #cbd5e0;
+    }
+    
+    .table-weights {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .table-weights th {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .table-weights tr:nth-child(even) {
+      background-color: var(--accent-color);
+    }
+    
+    .progress {
+      height: 8px !important;
+      margin: 1.5rem 0;
+      border-radius: 10px;
+    }
+    
+    .progress-bar {
+      background-color: var(--primary-color);
+      transition: width 0.4s ease;
+    }
+    
+    @media (max-width: 768px) {
+      .wizard {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      .wizard-step {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+      
+      pre.formula {
+        font-size: 0.9rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wizard">
+    <h1 class="visually-hidden">Estimation Wizard Guide</h1>
+    
+    <div class="wizard-steps">
+      <div class="wizard-step active" data-step="0" role="tab" aria-selected="true">
+        <span>1</span>
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="wizard-step" data-step="1" role="tab" aria-selected="false">
+        <span>2</span>
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="wizard-step" data-step="2" role="tab" aria-selected="false">
+        <span>3</span>
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="wizard-step" data-step="3" role="tab" aria-selected="false">
+        <span>4</span>
+        <i class="fas fa-check"></i>
+      </div>
+    </div>
+    
+    <div class="progress">
+      <div id="progressBar" class="progress-bar" style="width: 25%;"></div>
+    </div>
+
+    <div class="wizard-contents">
+      <!-- Step 1 -->
+      <div class="wizard-content active" data-step="0" role="tabpanel">
+        <h2><i class="fas fa-upload me-2"></i>Step 1: Upload Use Case Diagram</h2>
+        <p class="lead">Upload your use case diagram image to start the estimation process.</p>
+        
+        <div class="info-card">
+          <p><strong><i class="fas fa-lightbulb me-2"></i>Important:</strong> For accurate detection, ensure that use case shapes (ellipses) have high contrast with the background.</p>
+        </div>
+
+        <div class="example-box">
+          <h5><i class="fas fa-image me-2"></i>Example Diagram</h5>
+          <img
+            src="https://www.visily.ai/wp-content/uploads/2024/04/image-use-case-diagram-template-400090154-1200x758.png"
+            alt="Example use case diagram showing actors and use cases"
+            class="img-fluid rounded border mt-3"
+            style="max-height: 300px;"
+          />
+          <p class="text-muted mt-2 text-center">
+            <small>Well-defined use cases with clear boundaries</small>
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="wizard-content" data-step="1" role="tabpanel">
+        <h2><i class="fas fa-tasks me-2"></i>Step 2: Classify Elements & Input Factors</h2>
+        <p class="lead">Classify each element by its Functional Type and Complexity level.</p>
+        
+        <div class="mb-4">
+          <h4><i class="fas fa-tags me-2"></i>Functional Types</h4>
+          <ul class="list-unstyled">
+            <li class="mb-2"><strong class="text-primary">EI (External Input):</strong> Process input data from outside the application boundary.</li>
+            <li class="mb-2"><strong class="text-primary">EO (External Output):</strong> Generate output data to outside the application.</li>
+            <li class="mb-2"><strong class="text-primary">EQ (External Inquiry):</strong> Input-output combination to retrieve data.</li>
+            <li class="mb-2"><strong class="text-primary">ILF (Internal Logical File):</strong> Data maintained inside the application.</li>
+            <li><strong class="text-primary">EIF (External Interface File):</strong> Data referenced but maintained externally.</li>
+          </ul>
+        </div>
+
+        <div class="mb-4">
+          <h4><i class="fas fa-layer-group me-2"></i>Complexity Levels</h4>
+          <div class="d-flex gap-3">
+            <span class="badge bg-success py-2 px-3">Simple</span>
+            <span class="badge bg-warning text-dark py-2 px-3">Average</span>
+            <span class="badge bg-danger py-2 px-3">Complex</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h4><i class="fas fa-table me-2"></i>Weights Table</h4>
+          <div class="table-responsive">
+            <table class="table table-weights">
+              <thead>
+                <tr>
+                  <th>Function Type</th>
+                  <th>Simple</th>
+                  <th>Average</th>
+                  <th>Complex</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>External Inputs (EI)</td>
+                  <td>3</td>
+                  <td>4</td>
+                  <td>6</td>
+                </tr>
+                <tr>
+                  <td>External Outputs (EO)</td>
+                  <td>4</td>
+                  <td>5</td>
+                  <td>7</td>
+                </tr>
+                <tr>
+                  <td>External Inquiries (EQ)</td>
+                  <td>3</td>
+                  <td>4</td>
+                  <td>6</td>
+                </tr>
+                <tr>
+                  <td>Internal Logical Files (ILF)</td>
+                  <td>7</td>
+                  <td>10</td>
+                  <td>15</td>
+                </tr>
+                <tr>
+                  <td>External Interface Files (EIF)</td>
+                  <td>5</td>
+                  <td>7</td>
+                  <td>10</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h4><i class="fas fa-calculator me-2"></i>Function Point Calculations</h4>
+          <pre class="formula">
+Function Point (FP) = Unadjusted Functional Point (UFP) × Complexity Adjustment Factor (CAF)
+
+UFP = Σ (Number of Elements × Weight based on type and complexity)
+
+CAF = 0.65 + (Adjustment Factor × 0.01)
+
+Adjustment Factor = Sum of ratings (0 to 5) on 14 General System Characteristics
+          </pre>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="wizard-content" data-step="2" role="tabpanel">
+        <h2><i class="fas fa-clock me-2"></i>Step 3: Effort and Cost Estimation</h2>
+        <p class="lead">Standard formulas for project estimation based on function points.</p>
+        
+        <div class="example-box">
+          <h5><i class="fas fa-formula me-2"></i>Estimation Formulas</h5>
+          <pre class="formula">
+Effort (man-month) = FP ÷ Productivity (FP/month)
+
+Project Cost = Effort × Salary (JD/month)
+
+Estimated Hours = Effort × 160
+
+Team Size = Estimated Hours ÷ 160
+
+Minimum Budget = Effort × Salary
+Maximum Budget = Minimum Budget × 1.1 (10% contingency)
+          </pre>
+        </div>
+        
+        <div class="info-card">
+          <p><i class="fas fa-info-circle me-2"></i> <strong>Note:</strong> These are standard industry formulas. Your actual values may vary based on project specifics.</p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="wizard-content" data-step="3" role="tabpanel">
+        <h2><i class="fas fa-calendar-alt me-2"></i>Step 4: Project Duration and Timeline</h2>
+        <p class="lead">Estimate project duration and plan iterations using standard methods.</p>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="example-box h-100">
+              <h5><i class="fas fa-stopwatch me-2"></i>Time Estimation</h5>
+              <pre class="formula">
+Project Duration (weeks) = 
+  Effort (man-month) × 4
+              </pre>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="example-box h-100">
+              <h5><i class="fas fa-sync-alt me-2"></i>Iteration Planning</h5>
+              <pre class="formula">
+Scrum Sprints = 
+  Project Duration ÷ 4
+  
+XP Iterations = 
+  Project Duration ÷ 2
+              </pre>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center mt-4">
+          <div class="alert alert-success">
+            <h4><i class="fas fa-check-circle me-2"></i>Guide Complete!</h4>
+            <p class="mb-0">You've now reviewed all key estimation concepts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-buttons">
+      <button id="backBtn" disabled>
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <button id="resetBtn" class="btn-outline">
+        <i class="fas fa-home"></i> Start Over
+      </button>
+      <button id="nextBtn">
+        Next <i class="fas fa-arrow-right"></i>
+      </button>
+      <button id="finishBtn" style="display:none">
+        <i class="fas fa-check"></i> Finish
+      </button>
+    </div>
+  </div>
+
+  <script>
+  const steps = document.querySelectorAll('.wizard-step');
+  const contents = document.querySelectorAll('.wizard-content');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const finishBtn = document.getElementById('finishBtn');
+  const progressBar = document.getElementById('progressBar');
+  let currentStep = 0;
+
+  function updateWizard() {
+    // Update steps
+    steps.forEach((step, i) => {
+      step.classList.toggle('active', i === currentStep);
+      step.classList.toggle('completed', i < currentStep);
+      step.setAttribute('aria-selected', i === currentStep);
+    });
+    
+    // Update contents
+    contents.forEach((content, i) => {
+      content.classList.toggle('active', i === currentStep);
+    });
+    
+    // Update buttons
+    backBtn.disabled = currentStep === 0;
+    nextBtn.style.display = currentStep === steps.length - 1 ? 'none' : 'flex';
+    finishBtn.style.display = currentStep === steps.length - 1 ? 'flex' : 'none';
+    
+    // Update progress bar
+    progressBar.style.width = `${(currentStep + 1) * 25}%`;
+  }
+
+  backBtn.onclick = () => {
+    if (currentStep > 0) {
+      currentStep--;
+      updateWizard();
+    }
+  };
+
+  nextBtn.onclick = () => {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      updateWizard();
+    }
+  };
+
+  finishBtn.onclick = () => {
+    showToast("Congratulations!", "You have completed the Estimation Wizard.", "success");
+    setTimeout(() => {
+      window.location.href = "{{ url_for('main.main') }}" ;  // Redirect to the upload page after toast
+    }, 3000); // Redirects after 3 seconds
+  };
+
+  // Toast function
+  function showToast(title, message, type = 'success') {
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toastContainer';
+      toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+      document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type} shadow-sm mb-3`;
+    toast.innerHTML = `
+      <div class="toast-body d-flex justify-content-between">
+        <div>
+          <strong>${title}</strong>
+          <p>${message}</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+      </div>
+    `;
+    toastContainer.appendChild(toast);
+    const toastInstance = new bootstrap.Toast(toast);
+    toastInstance.show();
+
+    // Remove toast after 4 seconds
+    setTimeout(() => {
+      toast.remove();
+    }, 4000);
+  }
+
+  // Initialize
+  updateWizard();
+</script>
+
+</body>

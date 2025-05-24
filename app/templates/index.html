@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light" data-lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esti-Use</title>
+  <meta name="description" content="Analyze use case diagrams, extract requirements, and estimate software project cost and effort.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="static/style1.css">
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <i class="fas fa-project-diagram logo-icon"></i>
+        <span class="logo-text">Esti<span class="logo-highlight">-Use</span></span>
+      </div>
+      
+      <div class="navbar-controls">
+        <button id="languageToggle" class="icon-button" aria-label="Toggle Language">
+          <i class="fas fa-language"></i>
+        </button>
+        
+        <button id="themeToggle" class="icon-button" aria-label="Toggle Theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        
+        <div class="user-profile" id="userProfile" style="display: none;">
+          <div class="user-avatar" id="userAvatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="user-details">
+            <span class="username" id="usernameDisplay">Guest</span>
+            <span class="user-role" id="userRoleDisplay"></span>
+            <button id="logoutBtn" class="btn-logout">
+              <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
+            </button>
+          </div>
+        </div>
+        
+        <button id="loginBtn" class="btn-primary btn-sm" data-i18n="login">Login</button>
+        
+        <a href="{{ url_for('main.wizard') }}" class="icon-button" aria-label="Help">
+          <i class="fas fa-question-circle"></i>
+        </a>
+        <a href="{{ url_for('main.settings') }}" class="icon-button" aria-label="Settings">
+          <i class="fas fa-cog"></i>
+        </a>
+      </div>      
+    </div>
+  </header>
+
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2 data-i18n="login">Login</h2>
+      <form id="loginForm">
+        <input type="text" id="loginUsername" placeholder="Username" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <select id="roleSelect" required>
+          <option value="" disabled selected data-i18n="select_role">Select your role</option>
+          <option value="developer" data-i18n="developer">Developer</option>
+          <option value="student" data-i18n="student">Student</option>
+          <option value="project_manager" data-i18n="project_manager">Project Manager</option>
+          <option value="other" data-i18n="other">Other</option>
+        </select>
+        <button type="submit" class="btn-primary" data-i18n="login">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="container">
+    <nav class="sidebar" aria-label="Sidebar Navigation">
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="#" class="nav-link"><i class="fas fa-home"></i><span data-i18n="dashboard">Dashboard</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('main.wizard') }}" class="nav-link">
+            <i class="fas fa-magic"></i><span data-i18n="wizard_mode">Wizard Mode</span>
+          </a>
+        </li>          
+         <li class="nav-item">
+          <a href="{{ url_for('main.analyze_image') }}" class="nav-link"><i class="fas fa-file-upload"></i><span data-i18n="upload_diagram">Upload Diagram</span></a>
+        </li> 
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-tab="requirements"><i class="fas fa-list"></i><span data-i18n="requirements">Requirements</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-tab="effort"><i class="fas fa-chart-line"></i><span data-i18n="effort_estimation">Effort Estimation</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-tab="budget"><i class="fas fa-money-bill-wave"></i><span data-i18n="budget_prediction">Budget Prediction</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-tab="timeline"><i class="fas fa-clock"></i><span data-i18n="timeline">Timeline</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('main.report') }}" target="_blank" class="nav-link" aria-label="Open Reports Page">
+           <i class="fas fa-file-export"></i><span data-i18n="reports">Reports</span>
+          </a>
+        </li>
+      </ul>
+    
+      <div class="sidebar-divider"></div>
+    
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-book"></i><span data-i18n="documentation">Documentation</span></a></li>
+        <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-headset"></i><span data-i18n="support">Support</span></a></li>
+      </ul>
+    </nav>
+    
+    <main class="main-content">
+      <header class="page-header">
+        <h1>Use Case Diagram Analyzer</h1>
+        <p>Automatically extract functional requirements and estimate project effort from Use Case Diagrams.</p>
+      </header>
+
+      <section class="card upload-card" id="uploadSection">
+        <div class="card-header">
+          <h2>Upload Use Case Diagram</h2>
+          <p>Upload an image file of your Use Case Diagram to begin analysis</p>
+        </div>
+        <div class="card-body">
+
+          <form action="{{ url_for('main.analyze_image') }}" method="POST" enctype="multipart/form-data">
+          <label for="fileInput" class="dropzone" id="dropzone">
+            <i class="fas fa-file-image dropzone-icon"></i>
+            <div class="dropzone-text"><span data-i18n="upload_file">Upload a file</span> <span data-i18n="or">or</span> <span data-i18n="drag_drop">drag and drop</span></div>
+            <p class="dropzone-hint" data-i18n="file_types">PNG, JPG, GIF up to 10MB</p>
+          </label>
+          <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.gif"class="file-input" required>
+          
+          <div class="file-preview" id="filePreview" style="display: none;">
+            <div class="preview-container">
+              <div class="preview-image-container">  
+                <img id="previewImage" src="" alt="Uploaded Use Case Diagram" class="preview-image">
+              </div>
+              <div class="preview-details">
+                <div class="preview-header">
+                  <h3 id="fileName">file.jpg</h3>
+                  <button id="removeFile" class="btn-remove" aria-label="Remove file">
+                    <i class="fas fa-trash-alt"></i> <span data-i18n="remove">Remove</span>
+                    
+                  </button>
+                  
+                </div>
+                <div class="preview-meta" id="fileMeta">0 KB · <span data-i18n="last_modified">Last modified</span>: <span data-i18n="today">Today</span></div>
+                <div class="preview-actions">
+                  <button id="startAnalysis" class="btn-primary"><i class="fas fa-play"></i> <span data-i18n="start_analysis">Start Analysis</span></button>
+                </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card status-card" id="processingSection" style="display: none;">
+        <div class="card-header">
+          <h2 data-i18n="processing_diagram">Processing Diagram</h2>
+          <p data-i18n="processing_description">Your diagram is being analyzed</p>
+        </div>
+        <div class="card-body">
+          <div class="status-container">
+            <div class="status-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
+              </div>
+              <div class="progress-text">
+                <span id="currentStep">Image Processing</span> - <span id="progressPercent">0%</span>
+              </div>
+            </div>
+            <div class="status-steps">
+              <div class="step active" data-step="upload">
+                <div class="step-icon"><i class="fas fa-upload"></i></div>
+                <div class="step-label" data-i18n="upload">Upload</div>
+              </div>
+            
+              <div class="step" data-step="image_processing">
+                <div class="step-icon"><i class="fas fa-cogs"></i></div>
+                <div class="step-label" data-i18n="image_processing">Image Preprocessing</div>
+              </div>
+            
+              <div class="step" data-step="object_detection">
+                <div class="step-icon"><i class="fas fa-crosshairs"></i></div>
+                <div class="step-label" data-i18n="object_detection">Object Detection</div>
+              </div>
+            
+              <div class="step" data-step="classification">
+                <div class="step-icon"><i class="fas fa-tags"></i></div>
+                <div class="step-label" data-i18n="classification">Element Classification</div>
+              </div>
+            
+              <div class="step" data-step="estimation">
+                <div class="step-icon"><i class="fas fa-calculator"></i></div>
+                <div class="step-label" data-i18n="estimation">Effort Estimation</div>
+
+              </div>
+            </div>            
+          </div>
+        </div>
+      </section>
+
+      <section class="results-container" id="resultsSection" style="display: none;">
+        <nav class="tabs" aria-label="Results Tabs">
+          <button class="tab-btn active" data-tab="requirements"><i class="fas fa-list"></i> <span data-i18n="requirements">Requirements</span></button>
+          <button class="tab-btn" data-tab="effort"><i class="fas fa-chart-line"></i> <span data-i18n="effort_estimation">Effort Estimation</span></button>
+          <button class="tab-btn" data-tab="budget"><i class="fas fa-money-bill-wave"></i> <span data-i18n="budget_prediction">Budget Prediction</span></button>
+          <button class="tab-btn" data-tab="timeline"><i class="fas fa-clock"></i> <span data-i18n="timeline">Timeline</span></button>
+        </nav>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="requirements-tab">
+            <h2 data-i18n="extracted_requirements">Extracted Requirements</h2>
+            <div class="requirements-list" id="requirementsList"></div>
+            <div id="elementsGrid" class="elements-grid"></div>
+            <div class="actions">
+              <button id="calculateUFP" class="btn-primary"><i class="fas fa-calculator"></i> <span data-i18n="calculate_ufp">Calculate UFP</span></button>
+              <button id="resetForm" class="btn-secondary"><i class="fas fa-redo"></i> <span data-i18n="reset">Reset</span></button>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="effort-tab">
+            <h2 data-i18n="effort_estimation">Effort Estimation</h2>
+            <h2 data-i18n="adjustment_questions">Adjustment Questions</h3>
+            <P>Rate each factor from 0 (no influence) to 5 (strong influence).</P>
+            <ul id="adjustmentQuestions" class="gsc-questions"></ul>
+
+            <div class="agile-inputs">
+              <h3 data-i18n="project_assumptions">Project Assumptions</h3>
+              <P>Enter your project-specific parameters below.</P>
+              <div class="input-group">
+                <label for="productivityInput" data-i18n="productivity (FP/Month)">Average Productivity (FP/Month)</label>
+                <input type="number" id="productivityInput" placeholder="e.g., 18" min="1" required>
+              </div>
+              <div class="input-group">
+                <label for="salaryInput" data-i18n="average_salary (JD/Month)">Average Salary (JD/Month)</label>
+                <input type="number" id="salaryInput" placeholder="e.g., 5200" min="1" required>
+              </div>
+            </div>
+
+            <button id="calculateFinalEstimation" class="btn-primary"><i class="fas fa-calculator"></i> <span data-i18n="calculate_estimation">Calculate Final Estimation</span></button>
+
+            <div class="metrics-grid">
+              <div class="metric-card"><h3 data-i18n="function_points">Function Points</h3><div class="metric-value" id="ufpValue">0</div></div>
+              <div class="metric-card"><h3 data-i18n="adjusted_fp">Adjusted FP</h3><div class="metric-value" id="afpValue">0</div></div>
+              <div class="metric-card"><h3 data-i18n="estimated_hours">Estimated Hours</h3><div class="metric-value" id="effortHours">0</div></div>
+              <div class="metric-card"><h3 data-i18n="team_size">Team Size</h3><div class="metric-value" id="teamSize">0</div></div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="effortChart"></canvas>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="budget-tab">
+            <h2 data-i18n="budget_prediction">Budget Prediction</h2>
+            <div class="budget-summary">
+              <div class="budget-range">
+                <div class="budget-min">
+                  <h3 data-i18n="minimum_budget">Minimum Budget</h3>
+                  <div class="budget-value" id="budgetMin">$0</div>
+                </div>
+                <div class="budget-max">
+                  <h3 data-i18n="maximum_budget">Maximum Budget</h3>
+                  <div class="budget-value" id="budgetMax">$0</div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="budgetChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="timeline-tab">
+            <h2 data-i18n="project_timeline">Project Timeline</h2>
+            <div class="timeline-container">
+              <div class="timeline-header">
+                <div class="timeline-duration">
+                  <h3 data-i18n="estimated_duration">Estimated Duration</h3>
+                  <div class="duration-value" id="timeline">0 weeks</div>
+                </div>
+              </div>
+              <div class="timeline-chart">
+                <canvas id="timelineChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile Navigation">
+    <a href="#" class="mobile-nav-item active"><i class="fas fa-list"></i><span data-i18n="results">Results</span></a>
+    <a href="#" class="mobile-nav-item"><i class="fas fa-chart-line"></i><span data-i18n="estimates">Estimates</span></a>
+  </nav>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/i18next.min.js"></script>
+  <script src="static/script1.js"></script>
+  <!-- <script src="{{ url_for('static', filename='js/script1.js') }}"></script> -->
+
+</body>

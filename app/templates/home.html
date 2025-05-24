@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Esti-Use | AI-Powered Project Estimation Tool</title>
+  <meta name="description" content="Estimate software projects effortlessly using AI and UML Use Case Diagrams. Get accurate effort, cost, and time calculations.">
+  
+  <!-- Preconnect to CDNs for faster loading -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="images/estiuse-logo.png" type="image/png">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap & Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- AOS Animation Library (Load after critical content) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+<body>
+  <main class="container py-5 d-flex flex-column justify-content-center align-items-center text-center">
+    <!-- Logo with optimized alt text -->
+    <img src="{{ url_for('static', filename='images/estiuse-logo.png') }}" alt="Esti-Use Logo - AI-Powered UML Estimation Tool" class="mb-3" style="max-width: 120px;" />
+
+    <!-- Main Heading (Semantic H1) -->
+    <h1 class="logo mb-2" data-aos="fade-down">
+      Esti<span class="text-primary">-Use</span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p data-i18n="subtitle" class="intro-subtitle fs-5" data-aos="fade-up">
+      Smart Estimation. Powered by AI & Use Case Diagrams.
+    </p>
+
+    <!-- Value Proposition -->
+    <p data-i18n="lead" class="lead mb-4 text-white" data-aos="fade-up" data-aos-delay="200">
+      Upload your UML diagram and get instant project estimates with 90%+ accuracy
+    </p>
+
+    <!-- Primary CTAs -->
+    <div class="btn-group mb-3 d-flex flex-wrap justify-content-center gap-2" data-aos="zoom-in" data-aos-delay="400">
+      <a href="{{ url_for('main.login') }}" class="btn btn-primary px-4" aria-label="Log In to your account">
+        <i class="fas fa-sign-in-alt"></i> <span data-i18n="login">Log In</span>
+      </a>
+      <a href="{{ url_for('main.signup') }}" class="btn btn-primary px-4" aria-label="Create a new account">
+        <i class="fas fa-user-plus"></i> <span data-i18n="signup">Sign Up</span>
+      </a>
+    </div>
+
+    <!-- Secondary CTA (More prominent) -->
+    <!-- <a href="{{ url_for('main.upload') }}"class="btn btn-warning btn-lg mb-4 text-dark fw-bold" data-aos="fade-up" data-aos-delay="600"> -->
+      <i class="fas fa-upload"></i> <span data-i18n="getStarted">Get Started</span>
+    </a>
+
+    <!-- Dark Mode & Language -->
+    <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center" data-aos="fade-up" data-aos-delay="700">
+      <button id="toggleDark" class="btn btn-outline-light" aria-label="Toggle Dark Mode">
+        <i class="fas fa-moon"></i> <span data-i18n="toggleDark">Dark Mode</span>
+      </button>
+      <select id="langSwitcher" class="form-select w-auto" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+
+    <!-- Features List (Improved spacing) -->
+    <div class="features mb-5" data-aos="fade-up" data-aos-delay="800">
+      <h2 class="h4 mb-4 text-white">Why Choose Esti-Use?</h2>
+      <ul class="list-unstyled d-grid gap-2">
+        <li><i class="fas fa-check-circle text-success me-2"></i> <span data-i18n="feature1">Extract Actors and Use Cases automatically</span></li>
+        <li><i class="fas fa-check-circle text-success me-2"></i> <span data-i18n="feature2">Generate functional requirements in seconds</span></li>
+        <li><i class="fas fa-check-circle text-success me-2"></i> <span data-i18n="feature3">AI-powered effort & cost estimations</span></li>
+        <li><i class="fas fa-check-circle text-success me-2"></i> <span data-i18n="feature4">Export professional PDF/Excel reports</span></li>
+        <li><i class="fas fa-check-circle text-success me-2"></i> <span data-i18n="feature5">Dark mode & multilingual support</span></li>
+      </ul>
+    </div>
+
+    <!-- How It Works (Improved heading hierarchy) -->
+    <div class="visual-flow mt-4" data-aos="fade-up" data-aos-delay="1000">
+      <h2 class="h4 mb-4 text-white" data-i18n="howItWorks">How It Works</h2>
+      <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+        <div class="step">
+          <div class="step-icon bg-primary rounded-circle p-3 mb-2 mx-auto">
+            <i class="fas fa-project-diagram fa-2x text-white"></i>
+          </div>
+          <p class="fw-bold mb-1">Step 1</p>
+          <p data-i18n="step1text">Upload Use Case Diagram</p>
+        </div>
+        <i class="fas fa-arrow-right fa-lg text-white-50 d-none d-md-inline"></i>
+        <div class="step">
+          <div class="step-icon bg-success rounded-circle p-3 mb-2 mx-auto">
+            <i class="fas fa-tasks fa-2x text-white"></i>
+          </div>
+          <p class="fw-bold mb-1">Step 2</p>
+          <p data-i18n="step2text">Extract Requirements</p>
+        </div>
+        <i class="fas fa-arrow-right fa-lg text-white-50 d-none d-md-inline"></i>
+        <div class="step">
+          <div class="step-icon bg-warning rounded-circle p-3 mb-2 mx-auto">
+            <i class="fas fa-calculator fa-2x text-white"></i>
+          </div>
+          <p class="fw-bold mb-1">Step 3</p>
+          <p data-i18n="step3text">Estimate Effort & Cost</p>
+        </div>
+        <i class="fas fa-arrow-right fa-lg text-white-50 d-none d-md-inline"></i>
+        <div class="step">
+          <div class="step-icon bg-info rounded-circle p-3 mb-2 mx-auto">
+            <i class="fas fa-file-export fa-2x text-white"></i>
+          </div>
+          <p class="fw-bold mb-1">Step 4</p>
+          <p data-i18n="step4text">Export Report</p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <a href="https://youtu.be/demo-video" target="_blank" class="btn btn-outline-light">
+          <i class="fas fa-play-circle me-2"></i> <span data-i18n="watchDemo">Watch 2-Minute Demo</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="welcomeToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" data-i18n="welcome">
+          👋 Welcome to Esti-Use! Upload your first diagram and get instant estimates.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer-->
+      <footer class="mt-5 pt-4 pb-3 text-center text-white border-top">
+        <div class="container">
+          <p class="mb-1">© 2025 Esti-Use. All rights reserved.</p>
+          <p class="mb-1">Developed by <strong>Jourie Haitham Musleh</strong> & <strong>Nagham Zaidoun Al-Thawahreh</strong></p>
+    
+          <ul class="list-inline mb-3">
+            <li class="list-inline-item"><a href="{{ url_for('main.help') }}" class="text-white text-decoration-none" data-i18n="help">Help</a></li>
+            <li class="list-inline-item"><a href="{{ url_for('main.settings') }}" class="text-white text-decoration-none" data-i18n="settings">Settings</a></li>
+            <!-- <li class="list-inline-item"><a href="contact.html" class="text-white text-decoration-none" data-i18n="contact">Contact</a></li> -->
+          </ul>
+    
+          <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+            <a href="mailto:estiuse.support@gmail.com" class="text-white text-decoration-none">
+              <i class="fas fa-envelope me-1"></i> estiuse.support@gmail.com
+            </a>
+            <a href="https://www.linkedin.com/in/jory-mosleh-066ab02b4" target="_blank" class="text-white text-decoration-none">
+              <i class="fab fa-linkedin me-1"></i> Jourie's LinkedIn
+            </a>
+            <a href="https://www.linkedin.com/in/nagham-althawaherh-456873322" target="_blank" class="text-white text-decoration-none">
+              <i class="fab fa-linkedin me-1"></i> Nagham's LinkedIn
+            </a>
+          </div>
+        </div>
+      </footer>
+
+  <!-- Scripts (AOS loaded after DOM) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Load AOS after critical content
+    window.addEventListener('DOMContentLoaded', () => {
+      const aosScript = document.createElement('script');
+      aosScript.src = 'https://unpkg.com/aos@2.3.4/dist/aos.js';
+      aosScript.onload = () => AOS.init({ once: true, duration: 800 });
+      document.body.appendChild(aosScript);
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
